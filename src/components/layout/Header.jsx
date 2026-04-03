@@ -8,7 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { NAV_ITEMS, LANGUAGES, BRAND } from '../../constants';
 
 // ─── Language Switcher ────────────────────────────────────────────────────────
-function LanguageSwitcher() {
+function LanguageSwitcher({ scrolled }) {
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -28,7 +28,12 @@ function LanguageSwitcher() {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex items-center gap-1.5 px-2 py-1 rounded text-sm font-heading font-semibold text-neutral-600 dark:text-neutral-300 hover:text-accent dark:hover:text-accent transition-colors"
+        className={clsx(
+          'flex items-center gap-1.5 px-2 py-1 rounded text-sm font-heading font-semibold hover:text-accent transition-colors',
+          scrolled
+            ? 'text-neutral-600 dark:text-neutral-300 dark:hover:text-accent'
+            : 'text-neutral-200 hover:text-accent',
+        )}
       >
         <span>{current.flag}</span>
         <span>{current.shortLabel}</span>
@@ -72,7 +77,7 @@ function LanguageSwitcher() {
 }
 
 // ─── Theme Toggle ──────────────────────────────────────────────────────────────
-function ThemeToggle() {
+function ThemeToggle({ scrolled }) {
   const { isDark, toggleTheme } = useTheme();
   const { t } = useTranslation();
 
@@ -80,7 +85,12 @@ function ThemeToggle() {
     <button
       onClick={toggleTheme}
       aria-label={isDark ? t('common.lightMode') : t('common.darkMode')}
-      className="w-9 h-9 flex items-center justify-center rounded text-neutral-500 dark:text-neutral-400 hover:text-accent dark:hover:text-accent hover:bg-neutral-100 dark:hover:bg-dark-card transition-all"
+      className={clsx(
+        'w-9 h-9 flex items-center justify-center rounded hover:text-accent transition-all',
+        scrolled
+          ? 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-dark-card dark:hover:text-accent'
+          : 'text-neutral-200 hover:bg-white/10',
+      )}
     >
       {isDark ? <SunIcon /> : <MoonIcon />}
     </button>
@@ -88,7 +98,7 @@ function ThemeToggle() {
 }
 
 // ─── Desktop Dropdown Item ────────────────────────────────────────────────────
-function NavDropdown({ item, t }) {
+function NavDropdown({ item, t, scrolled }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -104,7 +114,7 @@ function NavDropdown({ item, t }) {
     <div ref={ref} className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="nav-link flex items-center gap-1"
+        className={clsx('nav-link flex items-center gap-1', !scrolled && '!text-neutral-200')}
         aria-haspopup="true"
         aria-expanded={open}
       >
@@ -306,13 +316,15 @@ export default function Header() {
           <nav className="hidden lg:flex items-center gap-7">
             {NAV_ITEMS.map((item) =>
               item.children ? (
-                <NavDropdown key={item.key} item={item} t={t} />
+                <NavDropdown key={item.key} item={item} t={t} scrolled={scrolled} />
               ) : (
                 <NavLink
                   key={item.key}
                   to={item.path}
                   end={item.path === '/'}
-                  className={({ isActive }) => clsx('nav-link', isActive && 'active')}
+                  className={({ isActive }) =>
+                    clsx('nav-link', isActive && 'active', !scrolled && !isActive && '!text-neutral-200')
+                  }
                 >
                   {t(`nav.${item.key}`)}
                 </NavLink>
@@ -322,8 +334,8 @@ export default function Header() {
 
           {/* Right controls */}
           <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <LanguageSwitcher />
+            <ThemeToggle scrolled={scrolled} />
+            <LanguageSwitcher scrolled={scrolled} />
 
             {/* CTA — desktop only */}
             <a
@@ -335,7 +347,12 @@ export default function Header() {
 
             {/* Hamburger — mobile */}
             <button
-              className="lg:hidden p-2 rounded text-neutral-600 dark:text-neutral-300 hover:text-accent transition-colors"
+              className={clsx(
+                'lg:hidden p-2 rounded hover:text-accent transition-colors',
+                scrolled
+                  ? 'text-neutral-600 dark:text-neutral-300'
+                  : 'text-neutral-200',
+              )}
               onClick={() => setMobileOpen(true)}
               aria-label={t('common.menu')}
             >

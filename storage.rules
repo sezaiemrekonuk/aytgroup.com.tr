@@ -1,0 +1,60 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Helper functions ───────────────────────────────────────────────────────
+
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isPdf() {
+      return request.resource.contentType == 'application/pdf';
+    }
+
+    function isImageOrPdf() {
+      return isImage() || isPdf();
+    }
+
+    // Max 10 MB for images, 50 MB for PDFs
+    function withinSizeLimit() {
+      return (isImage() && request.resource.size <= 10 * 1024 * 1024)
+          || (isPdf()   && request.resource.size <= 50 * 1024 * 1024);
+    }
+
+    // ── Project assets ────────────────────────────────────────────────────────
+    // Hero images, gallery photos, and brochure PDFs
+    match /projects/{projectId}/{allFiles=**} {
+      allow read:   if true;
+      allow write:  if isAdmin() && isImageOrPdf() && withinSizeLimit();
+      allow delete: if isAdmin();
+    }
+
+    // ── Service assets ────────────────────────────────────────────────────────
+    match /services/{serviceId}/{allFiles=**} {
+      allow read:   if true;
+      allow write:  if isAdmin() && isImage() && withinSizeLimit();
+      allow delete: if isAdmin();
+    }
+
+    // ── Review / testimonial avatars ──────────────────────────────────────────
+    match /reviews/{reviewId}/{allFiles=**} {
+      allow read:   if true;
+      allow write:  if isAdmin() && isImage() && withinSizeLimit();
+      allow delete: if isAdmin();
+    }
+
+    // ── Site-wide assets (logos, hero backgrounds, etc.) ─────────────────────
+    match /assets/{allFiles=**} {
+      allow read:   if true;
+      allow write:  if isAdmin() && isImageOrPdf() && withinSizeLimit();
+      allow delete: if isAdmin();
+    }
+
+    // Everything else: deny all (defence-in-depth)
+  }
+}

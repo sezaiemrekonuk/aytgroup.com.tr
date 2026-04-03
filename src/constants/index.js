@@ -349,6 +349,7 @@ export const COLLECTIONS = {
   SERVICES: 'services',
   CONTACTS: 'contacts',
   SETTINGS: 'settings',
+  REVIEWS:  'reviews',
 };
 
 // ─── Pagination ───────────────────────────────────────────────────────────────

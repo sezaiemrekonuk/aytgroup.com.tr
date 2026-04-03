@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -6,6 +6,7 @@ import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { TESTIMONIALS } from '../../constants';
+import { getApprovedReviews } from '../../services/reviewService';
 import SectionTitle from '../ui/SectionTitle';
 
 function StarRating({ rating }) {
@@ -20,7 +21,31 @@ function StarRating({ rating }) {
   );
 }
 
-function TestimonialCard({ testimonial }) {
+// Card for Firestore reviews (plain strings)
+function FirestoreCard({ review }) {
+  return (
+    <div className="bg-white dark:bg-dark-card rounded p-8 shadow-card border border-neutral-100 dark:border-dark-border h-full flex flex-col">
+      <StarRating rating={review.rating} />
+      <blockquote className="flex-1 text-neutral-600 dark:text-dark-muted text-sm leading-relaxed italic mb-6">
+        "{review.content}"
+      </blockquote>
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-accent/20 dark:bg-accent/30 flex items-center justify-center font-heading font-bold text-accent text-sm">
+          {review.name?.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <p className="font-heading font-semibold text-sm text-primary dark:text-neutral-100">
+            {review.name}
+          </p>
+          {review.role && <p className="text-xs text-neutral-400">{review.role}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Card for static TESTIMONIALS (i18n keys)
+function StaticCard({ testimonial }) {
   const { t } = useTranslation();
   return (
     <div className="bg-white dark:bg-dark-card rounded p-8 shadow-card border border-neutral-100 dark:border-dark-border h-full flex flex-col">
@@ -45,6 +70,14 @@ function TestimonialCard({ testimonial }) {
 
 export default function TestimonialsSection() {
   const { t } = useTranslation();
+  const [firestoreReviews, setFirestoreReviews] = useState([]);
+
+  useEffect(() => {
+    getApprovedReviews().then(setFirestoreReviews).catch(() => {});
+  }, []);
+
+  // Use Firestore reviews if available, otherwise fall back to static constants
+  const useFirestore = firestoreReviews.length > 0;
 
   return (
     <section className="section-padding bg-neutral dark:bg-dark-bg">
@@ -74,11 +107,18 @@ export default function TestimonialsSection() {
             }}
             className="pb-12"
           >
-            {TESTIMONIALS.map((t) => (
-              <SwiperSlide key={t.id} className="h-auto">
-                <TestimonialCard testimonial={t} />
-              </SwiperSlide>
-            ))}
+            {useFirestore
+              ? firestoreReviews.map((r) => (
+                  <SwiperSlide key={r.id} className="h-auto">
+                    <FirestoreCard review={r} />
+                  </SwiperSlide>
+                ))
+              : TESTIMONIALS.map((testimonial) => (
+                  <SwiperSlide key={testimonial.id} className="h-auto">
+                    <StaticCard testimonial={testimonial} />
+                  </SwiperSlide>
+                ))
+            }
           </Swiper>
         </motion.div>
       </div>

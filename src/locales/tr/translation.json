@@ -96,6 +96,8 @@
   "projects": {
     "title": "Projelerimiz",
     "subtitle": "Tamamlanan ve devam eden projelerimiz",
+    "eyebrow": "Portföy",
+    "resultCount": "{{count}} proje",
     "filter": {
       "all": "Tümü",
       "residential": "Konut",
@@ -126,7 +128,11 @@
       }
     },
     "noResults": "Bu filtreye uygun proje bulunamadı.",
-    "loadMore": "Daha Fazla Proje Gör"
+    "loadMore": "Daha Fazla Proje Gör",
+    "form": {
+      "sectionDetails": "Proje detayları",
+      "progressHelper": "Devam eden projelerde ilerleme aşamalarını göstermek için kullanılır."
+    }
   },
   "about": {
     "title": "Hakkımızda",

@@ -78,7 +78,7 @@ export default function ProjectDetail() {
       {/* ── Breadcrumb ── */}
       <div className="bg-white dark:bg-dark-card border-b border-neutral-100 dark:border-dark-border">
         <div className="container-site py-3 text-xs text-neutral-400 flex items-center gap-2">
-          <Link to="/" className="hover:text-accent">Ana Sayfa</Link>
+          <Link to="/" className="hover:text-accent">{t('nav.home')}</Link>
           <span>›</span>
           <Link to="/projelerimiz" className="hover:text-accent">{t('nav.projects')}</Link>
           <span>›</span>

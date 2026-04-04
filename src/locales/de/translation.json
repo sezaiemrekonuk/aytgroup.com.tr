@@ -96,6 +96,8 @@
   "projects": {
     "title": "Unsere Projekte",
     "subtitle": "Abgeschlossene und laufende Bauprojekte",
+    "eyebrow": "Portfolio",
+    "resultCount": "{{count}} Projekte",
     "filter": {
       "all": "Alle",
       "residential": "Wohnbau",
@@ -126,7 +128,11 @@
       }
     },
     "noResults": "Keine Projekte für diesen Filter gefunden.",
-    "loadMore": "Mehr Projekte laden"
+    "loadMore": "Mehr Projekte laden",
+    "form": {
+      "sectionDetails": "Projektdetails",
+      "progressHelper": "Wird bei laufenden Projekten zur Anzeige der Baufortschrittsstufen verwendet."
+    }
   },
   "about": {
     "title": "Über uns",

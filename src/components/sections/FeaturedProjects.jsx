@@ -13,7 +13,7 @@ export default function FeaturedProjects() {
     <section className="section-padding bg-neutral dark:bg-dark-bg">
       <div className="container-site">
         <SectionTitle
-          eyebrow="Portfolio"
+          eyebrow={t('projects.eyebrow')}
           title={t('featuredProjects.title')}
           subtitle={t('featuredProjects.subtitle')}
         />

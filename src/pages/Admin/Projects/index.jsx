@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { getProjects, deleteProject } from '../../../services/projectService';
 
 const STATUS_COLORS = {
@@ -14,13 +15,14 @@ const CATEGORY_COLORS = {
 
 function Badge({ label, color }) {
   return (
-    <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium capitalize ${color}`}>
+    <span className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${color}`}>
       {label}
     </span>
   );
 }
 
 export default function ProjectsList() {
+  const { t } = useTranslation();
   const [projects,    setProjects]    = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [search,      setSearch]      = useState('');
@@ -88,17 +90,17 @@ export default function ProjectsList() {
           className="border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent w-56"
         />
         <div className="flex rounded-lg border border-slate-200 overflow-hidden text-sm">
-          {['all', 'completed', 'ongoing'].map((s) => (
+              {['all', 'completed', 'ongoing'].map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-2 capitalize transition ${
+              className={`px-3 py-2 transition ${
                 statusFilter === s
                   ? 'bg-[#1A2B3C] text-white'
                   : 'bg-white text-slate-600 hover:bg-slate-50'
               }`}
             >
-              {s}
+              {s === 'all' ? t('projects.filter.all') : t(`projects.status.${s}`)}
             </button>
           ))}
         </div>
@@ -147,13 +149,13 @@ export default function ProjectsList() {
                       </td>
                       <td className="px-4 py-3 hidden sm:table-cell">
                         <Badge
-                          label={project.category}
+                          label={t(`projects.filter.${project.category}`, { defaultValue: project.category })}
                           color={CATEGORY_COLORS[project.category] ?? 'bg-slate-100 text-slate-600'}
                         />
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <Badge
-                          label={project.status}
+                          label={t(`projects.status.${project.status}`, { defaultValue: project.status })}
                           color={STATUS_COLORS[project.status] ?? 'bg-slate-100 text-slate-600'}
                         />
                       </td>

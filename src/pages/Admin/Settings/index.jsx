@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { seedProjects } from '../../../services/projectService';
+import React from 'react';
 
 function InfoRow({ label, value }) {
   return (
@@ -11,25 +10,7 @@ function InfoRow({ label, value }) {
 }
 
 export default function Settings() {
-  const [seeding,  setSeeding]  = useState(false);
-  const [seeded,   setSeeded]   = useState(false);
-  const [seedError,setSeedError]= useState('');
-
   const configured = Boolean(process.env.REACT_APP_FIREBASE_PROJECT_ID);
-
-  async function handleSeedProjects() {
-    if (!window.confirm('This will add the 4 seed projects to Firestore. Continue?')) return;
-    setSeeding(true);
-    setSeedError('');
-    try {
-      await seedProjects();
-      setSeeded(true);
-    } catch (e) {
-      setSeedError(e.message);
-    } finally {
-      setSeeding(false);
-    }
-  }
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto">
@@ -44,7 +25,7 @@ export default function Settings() {
         <div className="flex items-center gap-3 mb-4">
           <div className={`w-2.5 h-2.5 rounded-full ${configured ? 'bg-green-500' : 'bg-red-400'}`} />
           <span className={`text-sm font-medium ${configured ? 'text-green-700' : 'text-red-600'}`}>
-            {configured ? 'Connected' : 'Not configured — using seed data'}
+            {configured ? 'Connected' : 'Not configured — site data requires Firebase'}
           </span>
         </div>
         {!configured && (
@@ -59,34 +40,6 @@ export default function Settings() {
           <InfoRow label="Auth Domain"        value={process.env.REACT_APP_FIREBASE_AUTH_DOMAIN} />
           <InfoRow label="Storage Bucket"     value={process.env.REACT_APP_FIREBASE_STORAGE_BUCKET} />
         </div>
-      </div>
-
-      {/* Data seeding */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 mb-5">
-        <h2 className="font-heading font-semibold text-slate-700 mb-2">Seed Data</h2>
-        <p className="text-sm text-slate-500 mb-4">
-          Populate Firestore with sample data. Only run this once when setting up a new Firebase project.
-        </p>
-        {seeded && (
-          <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-sm text-green-700 mb-4">
-            Seed projects added to Firestore successfully.
-          </div>
-        )}
-        {seedError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600 mb-4">
-            {seedError}
-          </div>
-        )}
-        <button
-          onClick={handleSeedProjects}
-          disabled={seeding || !configured}
-          className="px-4 py-2.5 text-sm font-semibold text-white bg-[#1A2B3C] hover:bg-[#243A52] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {seeding ? 'Seeding…' : 'Seed Sample Projects'}
-        </button>
-        {!configured && (
-          <p className="text-xs text-slate-400 mt-2">Configure Firebase first to enable seeding.</p>
-        )}
       </div>
 
       {/* Help */}

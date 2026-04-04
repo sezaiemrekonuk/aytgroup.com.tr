@@ -1,8 +1,7 @@
 /**
  * Project Service — Firestore CRUD for the `projects` collection.
- *
- * Falls back to SEED_PROJECTS (constants/index.js) when Firebase is
- * not configured or network is unavailable, so the UI always has data.
+ * Returns empty arrays / null when Firebase is unavailable or queries fail
+ * (no bundled demo data).
  */
 
 import {
@@ -43,7 +42,7 @@ function fromDoc(snap) {
  */
 export async function getProjects({ status, category } = {}) {
   if (!isFirebaseConfigured()) {
-    return filterSeed({ status, category });
+    return [];
   }
 
   try {
@@ -67,8 +66,8 @@ export async function getProjects({ status, category } = {}) {
     const snap = await getDocs(q);
     return snap.docs.map(fromDoc);
   } catch (err) {
-    console.warn('[projectService] Firestore error, using seed data:', err.message);
-    return filterSeed({ status, category });
+    console.warn('[projectService] Firestore error:', err.message);
+    return [];
   }
 }
 
@@ -79,7 +78,7 @@ export async function getProjects({ status, category } = {}) {
  */
 export async function getFeaturedProjects(count = 3) {
   if (!isFirebaseConfigured()) {
-    return SEED_PROJECTS.filter((p) => p.featured).slice(0, count);
+    return [];
   }
 
   try {
@@ -90,11 +89,10 @@ export async function getFeaturedProjects(count = 3) {
       limit(count),
     );
     const snap = await getDocs(q);
-    if (snap.empty) return SEED_PROJECTS.filter((p) => p.featured).slice(0, count);
     return snap.docs.map(fromDoc);
   } catch (err) {
     console.warn('[projectService] Firestore error:', err.message);
-    return SEED_PROJECTS.filter((p) => p.featured).slice(0, count);
+    return [];
   }
 }
 
@@ -105,7 +103,7 @@ export async function getFeaturedProjects(count = 3) {
  */
 export async function getProject(slugOrId) {
   if (!isFirebaseConfigured()) {
-    return SEED_PROJECTS.find((p) => p.slug === slugOrId || p.id === slugOrId) ?? null;
+    return null;
   }
 
   try {
@@ -119,7 +117,7 @@ export async function getProject(slugOrId) {
     return docSnap.exists() ? fromDoc(docSnap) : null;
   } catch (err) {
     console.warn('[projectService] Firestore error:', err.message);
-    return SEED_PROJECTS.find((p) => p.slug === slugOrId || p.id === slugOrId) ?? null;
+    return null;
   }
 }
 
@@ -160,10 +158,13 @@ export async function deleteProject(id) {
 }
 
 /**
- * Seed Firestore with SEED_PROJECTS (run once from browser console or a script).
- * Import and call this manually: `import { seedProjects } from './services/projectService'`
+ * Seed Firestore with SEED_PROJECTS when that array is populated (dev/demo only).
  */
 export async function seedProjects() {
+  if (!SEED_PROJECTS.length) {
+    console.info('[projectService] SEED_PROJECTS is empty — nothing to seed.');
+    return;
+  }
   for (const project of SEED_PROJECTS) {
     await addDoc(projectsRef(), {
       ...project,
@@ -172,13 +173,4 @@ export async function seedProjects() {
     });
   }
   console.info('[projectService] ✅ Seed complete.');
-}
-
-// ─── Internal ─────────────────────────────────────────────────────────────────
-function filterSeed({ status, category } = {}) {
-  return SEED_PROJECTS.filter((p) => {
-    const matchStatus   = !status   || status   === 'all' || p.status   === status;
-    const matchCategory = !category || category === 'all' || p.category === category;
-    return matchStatus && matchCategory;
-  });
 }

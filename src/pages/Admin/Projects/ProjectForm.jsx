@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { addProject, updateProject, getProject } from '../../../services/projectService';
 
 const EMPTY = {
@@ -99,6 +100,7 @@ function ProgressSlider({ label, value, onChange }) {
 export default function ProjectForm() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const isEdit = Boolean(id) && id !== 'new';
 
   const [form,    setForm]    = useState(EMPTY);
@@ -263,25 +265,25 @@ export default function ProjectForm() {
 
         {/* ─── Details ─────────────────────────────────────────────────── */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 mb-5">
-          <SectionHeader title="Project Details" />
+          <SectionHeader title={t('projects.form.sectionDetails')} />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
             <Select
-              label="Category"
+              label={t('projects.detail.category')}
               value={form.category}
               onChange={(v) => setForm((f) => ({ ...f, category: v }))}
               options={[
-                { value: 'residential', label: 'Residential' },
-                { value: 'commercial',  label: 'Commercial' },
-                { value: 'industrial',  label: 'Industrial' },
+                { value: 'residential', label: t('projects.filter.residential') },
+                { value: 'commercial',  label: t('projects.filter.commercial') },
+                { value: 'industrial',  label: t('projects.filter.industrial') },
               ]}
             />
             <Select
-              label="Status"
+              label={t('projects.detail.status')}
               value={form.status}
               onChange={(v) => setForm((f) => ({ ...f, status: v }))}
               options={[
-                { value: 'ongoing',   label: 'Ongoing' },
-                { value: 'completed', label: 'Completed' },
+                { value: 'ongoing',   label: t('projects.status.ongoing') },
+                { value: 'completed', label: t('projects.status.completed') },
               ]}
             />
             <Input label="Area (m²)" type="number" value={form.sqm} onChange={(v) => setForm((f) => ({ ...f, sqm: v }))} placeholder="e.g. 32000" />
@@ -343,12 +345,12 @@ export default function ProjectForm() {
 
         {/* ─── Progress ────────────────────────────────────────────────── */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 mb-5">
-          <SectionHeader title="Construction Progress" />
-          <p className="text-xs text-slate-400 mb-4">Used for ongoing projects to show progress stages.</p>
+          <SectionHeader title={t('projects.detail.timeline')} />
+          <p className="text-xs text-slate-400 mb-4">{t('projects.form.progressHelper')}</p>
           <div className="space-y-5">
-            <ProgressSlider label="Foundation" value={form.progress.foundation} onChange={(v) => setProgress('foundation', v)} />
-            <ProgressSlider label="Structure"  value={form.progress.structure}  onChange={(v) => setProgress('structure', v)} />
-            <ProgressSlider label="Finishing"  value={form.progress.finishing}  onChange={(v) => setProgress('finishing', v)} />
+            <ProgressSlider label={t('projects.detail.progress.foundation')} value={form.progress.foundation} onChange={(v) => setProgress('foundation', v)} />
+            <ProgressSlider label={t('projects.detail.progress.structure')}  value={form.progress.structure}  onChange={(v) => setProgress('structure', v)} />
+            <ProgressSlider label={t('projects.detail.progress.finishing')}  value={form.progress.finishing}  onChange={(v) => setProgress('finishing', v)} />
           </div>
         </div>
 

@@ -47,7 +47,7 @@ export default function Projects() {
         <div className="absolute inset-0 bg-blueprint-grid-dark bg-grid-md opacity-50" aria-hidden />
         <div className="container-site relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <p className="font-heading text-xs font-semibold tracking-[0.2em] uppercase text-accent mb-4">Portfolio</p>
+            <p className="font-heading text-xs font-semibold tracking-[0.2em] uppercase text-accent mb-4">{t('projects.eyebrow')}</p>
             <h1 className="font-heading font-black text-4xl md:text-5xl text-white mb-4">
               {t('projects.title')}
             </h1>
@@ -91,7 +91,7 @@ export default function Projects() {
 
             {/* Result count */}
             <span className="ml-auto text-xs text-neutral-400 dark:text-dark-muted">
-              {loading ? '…' : `${projects.length} proje`}
+              {loading ? '…' : t('projects.resultCount', { count: projects.length })}
             </span>
           </div>
         </div>

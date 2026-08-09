@@ -1,21 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BRAND, SOCIAL_LINKS, NAV_ITEMS } from '../../constants';
 
-const JOTFORM_WIDGET_ID = '019f48167478700080de39a0964a807f8151';
-
 export default function Footer() {
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const src = `https://www.jotform.com/website-widgets/embed/${JOTFORM_WIDGET_ID}`;
-    if (document.querySelector(`script[src="${src}"]`)) return;
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
 
   const flatLinks = NAV_ITEMS.flatMap((item) =>
     item.children
@@ -144,9 +133,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      {/* JotForm website widget */}
-      <div id={`JFWebsiteWidget-${JOTFORM_WIDGET_ID}`} />
     </footer>
   );
 }
